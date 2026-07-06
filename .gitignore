@@ -1,0 +1,15 @@
+# Hassas bilgiler
+adminşifre.txt
+
+# Test dosyaları
+test_out.txt
+verify_e2e.js
+TEST_INFRA.md
+TEST_READY.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/

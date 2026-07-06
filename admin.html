@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çağrı Noble Yönetici Paneli | VIP Sistem Yönetimi</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- HTML to PDF conversion utility library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Firebase Web SDK Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, setDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-eUh9Avnsr6oa0m0d1ns95FFdBMuQJNU",
+      authDomain: "rentacar-227eb.firebaseapp.com",
+      projectId: "rentacar-227eb",
+      storageBucket: "rentacar-227eb.firebasestorage.app",
+      messagingSenderId: "624163542423",
+      appId: "1:624163542423:web:f6d7caf04b5fddab7c60d2",
+      measurementId: "G-3F98DN26ML"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.db = getFirestore(app);
+    window.firestoreTools = { collection, addDoc, setDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot };
+    console.log("Firebase initialized inside Admin Panel with Real-time listener support!");
+  </script>
+</head>
+<body class="bg-[#FDFCF8] text-[#121214] font-sans antialiased selection:bg-[#C5A059]/20 selection:text-[#C5A059]">
+
+  <!-- NAVIGATION HEADER -->
+  <nav class="navbar py-4 px-6 sticky top-0 bg-[#FDFCF8]/95 backdrop-blur-md border-b border-gray-200/80 z-50">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="index.html" class="brand-logo-wrapper">
+        <div class="brand-logo-badge">Ç</div>
+        <div class="flex flex-col">
+          <span class="brand-logo-text font-serif text-2xl font-bold tracking-tight leading-none uppercase">Çağrı</span>
+          <span class="text-[9px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase mt-0.5">Yönetim Paneli</span>
+        </div>
+      </a>
+      
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="btn-noble-outline" style="padding: 8px 16px; font-size: 0.7rem;">
+          <i class="ri-arrow-left-line"></i> Ana Sayfaya Git
+        </a>
+        <button id="admin-logout-btn" onclick="adminLogout()" class="btn-noble-outline hidden" style="padding: 8px 16px; font-size: 0.7rem; color: #EF4444; border-color: rgba(239,68,68,0.2);">
+          <i class="ri-logout-box-r-line"></i> Çıkış Yap
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PASSWORD GATE SECTION -->
+  <div id="admin-login-sec" class="max-w-md mx-auto px-6 py-24 text-center">
+    <div class="bg-white p-8 md:p-10 rounded-3xl border border-gray-200 shadow-md">
+      <div class="w-16 h-16 bg-[#121214] text-[#C5A059] rounded-2xl flex items-center justify-center font-serif font-bold text-3xl mx-auto mb-6">
+        Ç
+      </div>
+      <h2 class="font-serif text-3xl font-bold mb-2">Yönetici Girişi</h2>
+      <p class="text-xs text-gray-500 font-light mb-8">Çağrı VIP Sistem Yönetim Paneline erişim için yetkili şifrenizi giriniz.</p>
+      
+      <form onsubmit="event.preventDefault(); processAdminLogin();" class="space-y-4">
+        <div class="form-group relative">
+          <label class="form-label" style="text-align: left;">ŞİFRE</label>
+          <input type="password" id="admin-pass-input" required class="form-input pr-12" placeholder="Yönetici Şifresini Girin">
+          <button type="button" onclick="togglePassVisibility()" class="absolute right-4 top-[38px] text-gray-400 hover:text-gray-600">
+            <i class="ri-eye-line text-lg" id="pass-eye-icon"></i>
+          </button>
+        </div>
+        <button type="submit" class="btn-noble-gold w-full py-4 text-center justify-center">
+          <i class="ri-lock-unlock-line"></i> Paneli Aç
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN DASHBOARD (Hidden by Default) -->
+  <main id="admin-main-sec" class="max-w-7xl mx-auto px-6 py-12 hidden">
+    
+    <!-- STATS CARDS -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+      <div class="bg-[#121214] text-white p-6 rounded-3xl border border-[#C5A059]/20 shadow-sm flex flex-col justify-between">
+        <span class="text-[9px] font-extrabold tracking-widest text-[#C5A059] uppercase">BUGÜNKÜ CİRO</span>
+        <p class="font-serif text-3xl font-bold text-[#C5A059] mt-2">₺45.200</p>
+      </div>
+      <div class="bg-white border border-gray-200/80 p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+        <span class="text-[9px] font-extrabold tracking-widest text-gray-400 uppercase">FİLO MEVCUDU</span>
+        <p id="stat-fleet-count" class="font-serif text-3xl font-bold mt-2">0 Araç</p>
+      </div>
+      <div class="bg-white border border-gray-200/80 p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+        <span class="text-[9px] font-extrabold tracking-widest text-gray-400 uppercase">MÜŞTERİ YORUMU</span>
+        <p id="stat-testim-count" class="font-serif text-3xl font-bold mt-2">0 Kayıt</p>
+      </div>
+      <div class="bg-white border border-gray-200/80 p-6 rounded-3xl shadow-sm flex flex-col justify-between">
+        <span class="text-[9px] font-extrabold tracking-widest text-amber-500 uppercase">SSS SORU ADEDİ</span>
+        <p id="stat-faq-count" class="font-serif text-3xl font-bold mt-2">0 Soru</p>
+      </div>
+    </div>
+
+    <!-- TABS CONTROL ROW -->
+    <div class="flex flex-wrap gap-2 border-b border-gray-200 pb-4 mb-8">
+      <button onclick="switchAdminTab('fleet')" id="tab-btn-fleet" class="admin-nav-tab btn-noble-outline active">Filo Yönetimi</button>
+      <button onclick="switchAdminTab('testimonials')" id="tab-btn-testimonials" class="admin-nav-tab btn-noble-outline">Müşteri Yorumları</button>
+      <button onclick="switchAdminTab('faq')" id="tab-btn-faq" class="admin-nav-tab btn-noble-outline">SSS (FAQ) Yönetimi</button>
+      <button onclick="switchAdminTab('reservations')" id="tab-btn-reservations" class="admin-nav-tab btn-noble-outline">Rezervasyonlar</button>
+      <button onclick="switchAdminTab('pos')" id="tab-btn-pos" class="admin-nav-tab btn-noble-outline">Sanal POS & Ayarlar</button>
+    </div>
+
+    <!-- TAB 1: FLEET MANAGEMENT -->
+    <section id="admin-sec-fleet" class="admin-sec-view bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="font-serif text-2xl font-bold">Filo Yönetimi</h2>
+          <p class="text-xs text-gray-500">Mevcut kiralık araçları düzenleyin, yeni araçlar ekleyin veya durumu güncelleyin.</p>
+        </div>
+        <button onclick="openAddCarModal()" class="btn-noble-gold" style="padding: 10px 20px; font-size: 0.72rem;">
+          <i class="ri-add-line"></i> Yeni Araç Ekle
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ARAÇ FOTOĞRAFI & DETAYI</th>
+              <th style="text-align: center;">GÜNLÜK ÜCRET</th>
+              <th style="text-align: center;">KAPORA</th>
+              <th style="text-align: center;">DURUM</th>
+              <th style="text-align: right;">İŞLEMLER</th>
+            </tr>
+          </thead>
+          <tbody id="admin-fleet-table-body">
+            <!-- Dynamic items -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: TESTIMONIALS MANAGEMENT -->
+    <section id="admin-sec-testimonials" class="admin-sec-view bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm hidden">
+      <div class="mb-6">
+        <h2 class="font-serif text-2xl font-bold">Müşteri Yorumları & E-Posta Onay Durumu</h2>
+        <p class="text-xs text-gray-500">Sitede yayınlanan yorumları görüntüleyebilir, gizleyebilir veya silebilirsiniz.</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>MÜŞTERİ & E-POSTA</th>
+              <th style="text-align: center;">PUAN</th>
+              <th>YORUM İÇERİĞİ</th>
+              <th style="text-align: center;">DURUM</th>
+              <th style="text-align: right;">İŞLEMLER</th>
+            </tr>
+          </thead>
+          <tbody id="admin-testimonials-table-body">
+            <!-- Dynamic items -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: FAQ MANAGEMENT -->
+    <section id="admin-sec-faq" class="admin-sec-view bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm hidden">
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="font-serif text-2xl font-bold">Sıkça Sorulan Sorular (FAQ) Yönetimi</h2>
+          <p class="text-xs text-gray-500">Web sayfasındaki soru ve cevap başlıklarını TR ve EN olarak düzenleyin.</p>
+        </div>
+        <button onclick="openAddFAQModal()" class="btn-noble-gold" style="padding: 10px 20px; font-size: 0.72rem;">
+          <i class="ri-add-line"></i> Yeni Soru Ekle
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>SORU BAŞLIĞI (TR / EN)</th>
+              <th>CEVAP ÖNİZLEMESİ (TR)</th>
+              <th style="text-align: right;">İŞLEMLER</th>
+            </tr>
+          </thead>
+          <tbody id="admin-faq-table-body">
+            <!-- Dynamic items -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: RESERVATIONS -->
+    <section id="admin-sec-reservations" class="admin-sec-view bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm hidden">
+      <div class="mb-6">
+        <h2 class="font-serif text-2xl font-bold">Rezervasyon Siparişleri</h2>
+        <p class="text-xs text-gray-500">Müşterilerinizin internet sitesinden yaptığı kiralama siparişlerini inceleyin.</p>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>PNR KODU</th>
+              <th>MÜŞTERİ BİLGİSİ</th>
+              <th>KİRALANAN ARAÇ</th>
+              <th>TARİH ARALIĞI</th>
+              <th>TOPLAM TUTAR</th>
+              <th>DURUM</th>
+              <th style="text-align: right;">İŞLEM</th>
+            </tr>
+          </thead>
+          <tbody id="admin-res-table-body">
+            <!-- Dynamic items -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: POS CONFIG & ADMIN PASSWORD -->
+    <section id="admin-sec-pos" class="admin-sec-view hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Virtual POS Config -->
+        <div class="lg:col-span-7 bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+          <h2 class="font-serif text-2xl font-bold mb-2"><i class="ri-bank-card-line text-[#C5A059] mr-2"></i>Sanal POS API Yapılandırması</h2>
+          <p class="text-xs text-gray-500 mb-6">Müşteri ödemelerinin doğrudan iletileceği aracı ödeme kuruluşu ayarlarını güncelleyin.</p>
+          
+          <form onsubmit="event.preventDefault(); savePOSConfig();" class="space-y-4">
+            <div class="form-group">
+              <label class="form-label">Sanal POS Sağlayıcısı</label>
+              <select id="pos-provider" class="form-select">
+                <option value="PayTR">PayTR Sanal POS</option>
+                <option value="iyzico">iyzico Payment Gateway</option>
+                <option value="Garanti">Garanti BBVA VPOS</option>
+                <option value="Akbank">Akbank VPOS</option>
+                <option value="IsBank">İş Bankası NestPay</option>
+                <option value="YapıKredi">Yapı Kredi Posnet</option>
+              </select>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label">MAĞAZA KODU (MERCHANT ID)</label>
+                <input type="text" id="pos-merchant-id" required class="form-input" placeholder="Örn: 123456">
+              </div>
+              <div class="form-group">
+                <label class="form-label">API ANAHTARI (API KEY)</label>
+                <input type="text" id="pos-api-key" required class="form-input" placeholder="API Key Değeri">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">GÜVENLİK ANAHTARI (SECRET KEY)</label>
+              <input type="password" id="pos-secret-key" required class="form-input" placeholder="Secret Key Değeri">
+            </div>
+
+            <div class="flex gap-6 py-2">
+              <label class="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                <input type="checkbox" id="pos-3d-secure" class="rounded"> 3D Secure Güvenlik Zorunlu
+              </label>
+              <label class="flex items-center gap-2 text-xs font-bold cursor-pointer">
+                <input type="checkbox" id="pos-test-mode" class="rounded"> Test / Sandbox Modu
+              </label>
+            </div>
+
+            <button type="submit" class="btn-noble-gold w-full justify-center py-4">
+              Ayarları Kaydet <i class="ri-save-line ml-2"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Password Change -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h3 class="font-serif text-xl font-bold mb-2"><i class="ri-key-2-line text-[#C5A059] mr-2"></i>Panel Giriş Şifresi</h3>
+            <p class="text-xs text-gray-500 mb-6 font-light">Yönetici paneli giriş şifresini güncelleyin.</p>
+            
+            <form onsubmit="event.preventDefault(); updateAdminPassword();" class="space-y-4">
+              <div class="form-group">
+                <label class="form-label">YENİ ŞİFRE</label>
+                <input type="text" id="new-admin-pass" required class="form-input" placeholder="Yeni şifreyi giriniz">
+              </div>
+              <button type="submit" class="btn-noble-primary w-full justify-center">
+                Şifreyi Güncelle <i class="ri-check-line ml-2"></i>
+              </button>
+            </form>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 p-6 rounded-3xl text-xs text-amber-800 leading-relaxed">
+            <h4 class="font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+              <i class="ri-information-line text-lg"></i> Önemli Not
+            </h4>
+            Sanal POS ve şifre yapılandırmaları tarayıcı yerel hafızasında (localStorage) ve Firebase Firestore veri tabanında senkronize şekilde korunur. Canlı işlemlerde API erişimi için SSL sertifikası zorunludur.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT VEHICLE MODAL -->
+  <div id="add-car-modal" class="modal-backdrop" style="z-index: 1100;">
+    <div class="modal-card" style="max-width: 650px;">
+      <button onclick="closeModal('add-car-modal')" class="modal-close-btn">&times;</button>
+      
+      <div class="p-8">
+        <h3 id="add-car-modal-title" class="font-serif text-3xl font-bold mb-6">Filoya Yeni Araç Ekle</h3>
+        
+        <form onsubmit="event.preventDefault(); saveCarFromModal();" class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">MARKA</label>
+              <input type="text" id="new-car-brand" required class="form-input" placeholder="Mercedes-Benz">
+            </div>
+            <div class="form-group">
+              <label class="form-label">MODEL</label>
+              <input type="text" id="new-car-model" required class="form-input" placeholder="S-Class S500">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">GÜNLÜK ÜCRET (₺)</label>
+              <input type="number" id="new-car-price" required class="form-input" placeholder="4500">
+            </div>
+            <div class="form-group">
+              <label class="form-label">KAPORA (₺)</label>
+              <input type="number" id="new-car-deposit" class="form-input" placeholder="6000">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label">KATEGORİ</label>
+              <select id="new-car-category" class="form-select">
+                <option value="Sedan">Business Sedan</option>
+                <option value="SUV">Luxury SUV</option>
+                <option value="Elektrikli">Elektrikli</option>
+                <option value="Spor">Performans & Spor</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">YAKIT TİPİ</label>
+              <select id="new-car-fuel" class="form-select">
+                <option value="Dizel">Dizel</option>
+                <option value="Benzin">Benzin</option>
+                <option value="EV">EV (Elektrik)</option>
+                <option value="Hibrit">Hibrit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label"><i class="ri-image-add-line text-amber-500"></i> BİLGİSAYARDAN / TELEFONDAN ÇOKLU GÖRSEL SEÇ</label>
+            <input type="file" id="new-car-files" multiple accept="image/*" class="form-input" onchange="handleMultipleFileSelect(event)">
+            <p style="font-size: 0.7rem; color: #64748B; margin-top: 4px;">Birden fazla görsel yükleyerek galeri oluşturabilirsiniz.</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">VARSAYILAN GÖRSEL LİNKLERİ (HER SATIRA 1 ADET)</label>
+            <textarea id="new-car-images-urls" rows="3" class="form-textarea" placeholder="https://images.unsplash.com/...&#10;https://images.unsplash.com/..."></textarea>
+          </div>
+
+          <div id="new-car-thumbs-preview" class="flex flex-wrap gap-2 pt-2"></div>
+
+          <div class="form-group flex items-center gap-2 pt-2">
+            <input type="checkbox" id="new-car-prestige" class="w-4 h-4 rounded text-[#C5A059] border-gray-300 focus:ring-[#C5A059]">
+            <label for="new-car-prestige" class="text-xs font-bold text-gray-700 cursor-pointer">HAFTANIN PRESTİJ ARACI YAP</label>
+          </div>
+
+          <div class="pt-4">
+            <button type="submit" class="btn-noble-primary w-full justify-center py-4">
+              Araç Kaydını Kaydet <i class="ri-check-line"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT FAQ ITEM MODAL -->
+  <div id="add-faq-modal" class="modal-backdrop" style="z-index: 1200;">
+    <div class="modal-card" style="max-width: 600px;">
+      <button onclick="closeModal('add-faq-modal')" class="modal-close-btn">&times;</button>
+      
+      <div class="p-8">
+        <h3 id="add-faq-modal-title" class="font-serif text-3xl font-bold mb-6">SSS Soru & Cevap Ekle</h3>
+        
+        <form onsubmit="event.preventDefault(); saveFAQFromModal();" class="space-y-4">
+          <div class="form-group">
+            <label class="form-label">SORU BAŞLIĞI (TR)</label>
+            <input type="text" id="new-faq-q-tr" required class="form-input" placeholder="Örn: Minimum kiralama yaşı kaçtır?">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">SORU BAŞLIĞI (EN)</label>
+            <input type="text" id="new-faq-q-en" required class="form-input" placeholder="Ex: What is the minimum rental age?">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">DETAYLI CEVAP İÇERİĞİ (TR)</label>
+            <textarea id="new-faq-a-tr" rows="3" required class="form-textarea" placeholder="Cevap metnini buraya yazın..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">DETAYLI CEVAP İÇERİĞİ (EN)</label>
+            <textarea id="new-faq-a-en" rows="3" required class="form-textarea" placeholder="Write answer text in English..."></textarea>
+          </div>
+
+          <div class="pt-4">
+            <button type="submit" class="btn-noble-primary w-full justify-center py-4">
+              Soru Kaydını Kaydet <i class="ri-check-line"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript Logic for Admin -->
+  <script src="admin.js"></script>
+
+</body>
+</html>

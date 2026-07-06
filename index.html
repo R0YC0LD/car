@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Çağrı Noble Rent a Car | Lüks Araç Kiralama & VIP Filo</title>
+  <meta name="description" content="Türkiye'nin en seçkin lüks araç kiralama markası. Mercedes-Benz, BMW, Audi, Porsche ve Range Rover filosu ile kusursuz VIP sürüş deneyimi.">
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,300..900;1,300..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Animation & Smooth Scroll Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1/dist/lenis.min.js"></script>
+  <!-- HTML to PDF conversion utility library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Updated Firebase Web SDK v12.15.0 Integration -->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, setDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+    import { getAuth, sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-eUh9Avnsr6oa0m0d1ns95FFdBMuQJNU",
+      authDomain: "rentacar-227eb.firebaseapp.com",
+      projectId: "rentacar-227eb",
+      storageBucket: "rentacar-227eb.firebasestorage.app",
+      messagingSenderId: "624163542423",
+      appId: "1:624163542423:web:f6d7caf04b5fddab7c60d2",
+      measurementId: "G-3F98DN26ML"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    window.db = getFirestore(app);
+    window.firestoreTools = { collection, addDoc, setDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot };
+    window.auth = getAuth(app);
+    window.authTools = { sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink };
+    console.log("Firebase v12.15.0, Auth and Real-time listeners initialized successfully for rentacar-227eb!");
+  </script>
+</head>
+<body class="bg-[#FDFCF8] text-[#121214] font-sans antialiased selection:bg-[#C5A059]/20 selection:text-[#C5A059]">
+
+  <!-- Background Ambient Glows -->
+  <div class="bg-blob-gold top-0 right-0 opacity-40"></div>
+  <div class="bg-blob-dark bottom-1/3 left-0 opacity-20"></div>
+
+  <!-- ENTRY LANGUAGE SELECTION SPLASH MODAL -->
+  <div id="entry-lang-modal" class="modal-backdrop active">
+    <div class="modal-card text-center" style="max-width: 540px; padding: 44px 36px; background: #121214; color: white; border: 1px solid rgba(197, 160, 89, 0.3);">
+      
+      <div style="width: 76px; height: 76px; background: var(--noble-gold); color: black; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin: 0 auto 20px;" class="font-serif font-bold shadow-lg">
+        Ç
+      </div>
+
+      <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-2">ÇOK DİLLİ VIP SÜRÜŞ PORTALI / MULTILINGUAL PORTAL</span>
+      <h2 class="font-serif text-3xl font-bold mb-3" data-i18n="langSelectTitle">Lütfen Dil Tercihinizi Yapınız</h2>
+      <p class="text-xs text-gray-400 font-light max-w-sm mx-auto mb-8 leading-relaxed" data-i18n="langSelectDesc">
+        Çağrı Noble VIP sürüş deneyimine hoş geldiniz. Lütfen devam etmek istediğiniz dili seçin.
+      </p>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div onclick="selectInitialLanguage('TR')" class="lang-option-card">
+          <span class="text-4xl mb-1">🇹🇷</span>
+          <strong class="text-sm font-bold text-white">Türkçe (TR)</strong>
+          <span class="text-[10px] text-[#C5A059] font-extrabold tracking-widest uppercase">TÜRKİYE & VIP</span>
+        </div>
+
+        <div onclick="selectInitialLanguage('EN')" class="lang-option-card">
+          <span class="text-4xl mb-1">🇬🇧</span>
+          <strong class="text-sm font-bold text-white">English (EN)</strong>
+          <span class="text-[10px] text-[#C5A059] font-extrabold tracking-widest uppercase">GLOBAL VIP FLEET</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- NAVIGATION HEADER WITH ZERO-OVERLAP BRAND SPACING -->
+  <nav class="navbar">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      
+      <!-- Left Side: Brand Logo and Desktop Nav Links Container -->
+      <div class="flex items-center">
+        <!-- Brand Logo Wrapper -->
+        <a href="#" class="brand-logo-wrapper group">
+          <div class="brand-logo-badge group-hover:bg-[#C5A059] group-hover:text-[#121214]">Ç</div>
+          <div class="flex flex-col">
+            <span class="brand-logo-text font-serif text-2xl font-bold tracking-tight leading-none uppercase">Çağrı</span>
+            <span class="text-[9px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase mt-0.5">Rent a Car</span>
+          </div>
+        </a>
+
+        <!-- Desktop Nav Links -->
+        <div class="hidden lg:flex nav-links-container">
+          <a href="#hero" class="nav-link active" data-i18n="navHome">Anasayfa</a>
+          <a href="#filo" class="nav-link" data-i18n="navFleet">Seçkin Filo</a>
+          <a href="#nasil-calisir" class="nav-link" data-i18n="navExperience">Deneyim</a>
+          <a href="#yorumlar" class="nav-link" data-i18n="navTestimonials">Referanslar</a>
+          <a href="#faq" class="nav-link" data-i18n="navFAQ">SSS</a>
+          <a href="#iletisim" class="nav-link" data-i18n="navContact">İletişim & Konum</a>
+        </div>
+      </div>
+
+      <!-- Header Action Buttons -->
+      <div class="flex items-center gap-3">
+        <!-- Working Language Switcher -->
+        <div class="flex items-center gap-1 border border-gray-300 rounded-xl p-1 bg-white/60 text-xs font-bold shadow-sm">
+          <button onclick="setLanguage('TR')" class="lang-btn active" data-lang="TR">TR</button>
+          <span class="text-gray-300">|</span>
+          <button onclick="setLanguage('EN')" class="lang-btn" data-lang="EN">EN</button>
+        </div>
+
+        <a href="admin.html" class="btn-noble-outline hidden md:inline-flex" style="padding: 9px 14px; font-size: 0.68rem;" title="Yönetici Paneline Geç">
+          <i class="ri-shield-keyhole-line text-base text-[#C5A059]"></i>
+          <span class="hidden md:inline" data-i18n="navAdmin">Yönetici Paneli</span>
+        </a>
+        
+        <a href="#filo" class="btn-noble-primary hidden sm:inline-flex" style="padding: 9px 18px; font-size: 0.68rem;" data-i18n="navInspectFleet">
+          <i class="ri-car-line"></i>
+          <span>Filoyu İncele</span>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button onclick="toggleMobileDrawer()" class="lg:hidden w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center text-xl text-[#121214]">
+          <i class="ri-menu-4-line"></i>
+        </button>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- MOBILE NAVIGATION DRAWER -->
+  <div id="mobile-nav-drawer" class="mobile-nav-drawer">
+    <div class="flex justify-between items-center mb-10">
+      <div class="flex items-center gap-3">
+        <div class="brand-logo-badge" style="background: var(--noble-gold); color: black;">Ç</div>
+        <span class="font-serif text-2xl font-bold uppercase">Çağrı VIP</span>
+      </div>
+      <button onclick="toggleMobileDrawer()" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-xl">
+        <i class="ri-close-line"></i>
+      </button>
+    </div>
+
+    <div class="flex flex-col gap-6 text-lg font-bold uppercase tracking-wider">
+      <a href="#hero" onclick="toggleMobileDrawer()" data-i18n="navHome">Anasayfa</a>
+      <a href="#filo" onclick="toggleMobileDrawer()" data-i18n="navFleet">Seçkin Filo</a>
+      <a href="#nasil-calisir" onclick="toggleMobileDrawer()" data-i18n="navExperience">Kiralama Deneyimi</a>
+      <a href="#yorumlar" onclick="toggleMobileDrawer()" data-i18n="navTestimonials">Müşteri Görüşleri</a>
+      <a href="#faq" onclick="toggleMobileDrawer()" data-i18n="navFAQ">Sıkça Sorulan Sorular</a>
+      <a href="#iletisim" onclick="toggleMobileDrawer()" data-i18n="navContact">İletişim & Lokasyon</a>
+    </div>
+
+      <a href="admin.html" class="btn-noble-gold w-full py-4 text-center justify-center">
+        <i class="ri-shield-keyhole-line"></i> <span data-i18n="navAdmin">Yönetici Paneline Giriş</span>
+      </a>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section id="hero" class="relative pt-12 md:pt-16 pb-20 md:pb-28 px-6 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-8">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#121214]/5 border border-[#121214]/10 mb-6">
+            <span class="w-2 h-2 rounded-full bg-[#C5A059] animate-pulse"></span>
+            <span class="text-[10px] font-extrabold tracking-widest text-[#C5A059] uppercase" data-i18n="heroBadge">Türkiye'nin En Seçkin VIP Filosu</span>
+          </div>
+
+          <h1 class="hero-title-text font-serif text-5xl md:text-8xl lg:text-[100px] leading-[0.92] tracking-tighter text-[#121214] mb-8">
+            <span data-i18n="heroTitle1">Kusursuz Bir</span><br>
+            <span class="italic font-normal text-[#94A3B8]" data-i18n="heroTitle2">Sürüş Sanatı.</span>
+          </h1>
+
+          <p class="text-base md:text-xl text-[#64748B] font-light max-w-xl leading-relaxed mb-10" data-i18n="heroSubtitle">
+            Zarafet, konfor ve yüksek performansı buluşturan lüks araç koleksiyonumuz ile yolculuğunuza asalet katın. Sizin için hazırlanmış VIP sürüş ayrıcalığı.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <a href="#filo" class="btn-noble-gold" data-i18n="btnBookNow">
+              Hemen Araç Rezerve Et <i class="ri-arrow-right-line"></i>
+            </a>
+            <a href="#nasil-calisir" class="btn-noble-outline" data-i18n="btnProcess">
+              <i class="ri-play-circle-line text-lg"></i> Süreci İncele
+            </a>
+          </div>
+        </div>
+
+        <!-- Hero Feature Badge Box -->
+        <div class="lg:col-span-4 hidden lg:block" id="weekly-featured-container">
+          <div class="relative rounded-3xl overflow-hidden shadow-2xl border border-white/50 group">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&w=800&q=80&fit=crop" alt="Porsche Panamera" class="w-full h-[480px] object-cover group-hover:scale-105 transition-transform duration-1000">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#121214] via-transparent to-transparent opacity-80"></div>
+            <div class="absolute bottom-8 left-8 right-8 text-white">
+              <span class="text-[9px] font-extrabold tracking-[0.2em] text-[#C5A059] uppercase mb-2 block" data-i18n="weeklyFeatured">HAFTANIN PRESTİJ ARACI</span>
+              <h3 class="font-serif text-3xl font-bold mb-1">Porsche Panamera 4</h3>
+              <p class="text-xs text-gray-300 font-light mb-4">Hybrid Sport • 462 HP • 0-100: 4.4s</p>
+              <div class="flex justify-between items-center border-t border-white/20 pt-4">
+                <span class="font-serif text-2xl font-bold text-[#C5A059]">₺7.500 <span class="text-[10px] text-gray-300 uppercase font-sans">/gün</span></span>
+                <button onclick="startBooking('car-7')" class="btn-noble-gold" style="padding: 8px 16px; font-size: 0.65rem;" data-i18n="btnReserve">Detay & Kirala</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Reservation Search Bar -->
+      <div class="mt-12 md:mt-16 search-widget-box">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+          
+          <div class="form-group border-r-0 md:border-r border-gray-200 pr-0 md:pr-6">
+            <label class="form-label" data-i18n="quickPickup"><i class="ri-map-pin-2-line text-[#C5A059]"></i> ALIS NOKTASI</label>
+            <select id="hero-pickup-loc" class="form-select" style="border: none; background: transparent; padding-left: 0; font-size: 0.95rem;">
+              <option>İstanbul Havalimanı (IST)</option>
+              <option>Sabiha Gökçen Havalimanı (SAW)</option>
+              <option>İstanbul Levent Genel Merkez</option>
+              <option>Bodrum Milas Havalimanı (BJV)</option>
+              <option>İzmir Adnan Menderes (ADB)</option>
+            </select>
+          </div>
+
+          <div class="form-group border-r-0 md:border-r border-gray-200 pr-0 md:pr-6">
+            <label class="form-label" data-i18n="quickPickupDate"><i class="ri-calendar-event-line text-[#C5A059]"></i> ALIS TARİHİ</label>
+            <input type="date" value="2026-07-10" class="form-input" style="border: none; background: transparent; padding-left: 0; font-size: 0.95rem;">
+          </div>
+
+          <div class="form-group border-r-0 md:border-r border-gray-200 pr-0 md:pr-6">
+            <label class="form-label" data-i18n="quickReturnDate"><i class="ri-calendar-check-line text-[#C5A059]"></i> DÖNÜŞ TARİHİ</label>
+            <input type="date" value="2026-07-15" class="form-input" style="border: none; background: transparent; padding-left: 0; font-size: 0.95rem;">
+          </div>
+
+          <div>
+            <a href="#filo" class="btn-noble-gold" style="width: 100%; justify-content: center; padding: 18px;" data-i18n="btnSearchCollection">
+              <i class="ri-search-2-line"></i> Koleksiyonu Ara
+            </a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FLEET CATALOG SECTION -->
+  <section id="filo" class="py-20 md:py-24 px-6 bg-[#F5F4F0]/60">
+    <div class="max-w-7xl mx-auto">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 gap-6">
+        <div>
+          <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-2" data-i18n="fleetSubheading">SEÇKİN KOLEKSİYONUMUZ</span>
+          <h2 class="font-serif text-4xl md:text-6xl text-[#121214]" data-i18n="fleetHeading">Filomuzu Keşfedin</h2>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="fleet-count" class="text-xs font-bold uppercase tracking-widest text-gray-500">Listeleniyor</span>
+        </div>
+      </div>
+
+      <!-- Filter Controls Row -->
+      <div class="bg-white p-6 rounded-3xl shadow-sm border border-gray-200/80 mb-12 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        
+        <!-- Category Tabs -->
+        <div class="flex flex-wrap gap-2" id="category-tab-container">
+          <button class="cat-tab-btn active btn-noble-outline" data-category="Tüm" data-i18n="catAll">Tüm Araçlar</button>
+          <button class="cat-tab-btn btn-noble-outline" data-category="Sedan" data-i18n="catSedan">Business Sedan</button>
+          <button class="cat-tab-btn btn-noble-outline" data-category="SUV" data-i18n="catSUV">Luxury SUV</button>
+          <button class="cat-tab-btn btn-noble-outline" data-category="Elektrikli" data-i18n="catEV">Elektrikli</button>
+          <button class="cat-tab-btn btn-noble-outline" data-category="Spor" data-i18n="catSport">Performans & Spor</button>
+        </div>
+
+        <!-- Search & Sort Row -->
+        <div class="flex flex-wrap items-center gap-4">
+          <div class="relative min-w-[220px] w-full sm:w-auto">
+            <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="search-input" placeholder="Model veya marka ara..." class="form-input pl-11 py-2.5 text-xs" oninput="handleSearchInputChange(event)">
+          </div>
+
+          <select id="sort-select" class="form-select py-2.5 text-xs min-w-[170px]" onchange="handleSortSelectChange(event)">
+            <option value="recommended" data-i18n="sortRecommended">Önerilen Sıralama</option>
+            <option value="price-low" data-i18n="sortPriceLow">Fiyat: Düşükten Yükseğe</option>
+            <option value="price-high" data-i18n="sortPriceHigh">Fiyat: Yüksekten Düşüğe</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Dynamic Fleet Grid -->
+      <div id="fleet-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MOBILE FLOATING FILTER PILL BUTTON -->
+  <button id="mobile-filter-btn" onclick="scrollToElement('filo')" class="mobile-filter-btn">
+    <i class="ri-equalizer-line text-base text-[#C5A059]"></i>
+    <span data-i18n="mobileFilterBtn">Filtrele & Araçlar</span>
+  </button>
+
+  <!-- HOW IT WORKS SECTION -->
+  <section id="nasil-calisir" class="py-20 md:py-28 px-6 bg-[#121214] text-white relative overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+        
+        <div class="lg:col-span-5">
+          <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-3" data-i18n="expSubheading">DENEYİM VE SÜREÇ</span>
+          <h2 class="font-serif text-5xl md:text-6xl italic leading-tight mb-8" data-i18n="expHeading">4 Adımda Prestijli Kiralama</h2>
+          <p class="text-gray-400 font-light leading-relaxed mb-10" data-i18n="expDesc">
+            Çağrı Noble Rent a Car ile araç kiralama deneyimi tamamen şeffaf, hızlı ve dijitalleştirilmiştir. Kapora güvencesinden teslimata kadar tüm süreç kontrolünüz altında.
+          </p>
+
+          <div class="p-6 rounded-2xl bg-white/5 border border-white/10">
+            <div class="flex items-center gap-4 mb-3">
+              <i class="ri-shield-check-line text-3xl text-[#C5A059]"></i>
+              <div>
+                <h4 class="font-bold text-sm" data-i18n="expInsTitle">Uçtan Uca Sigorta Güvencesi</h4>
+                <p class="text-xs text-gray-400" data-i18n="expInsDesc">Tüm araçlarımız Rent-a-Car Kaskolu ve düzenli bakımlıdır.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-6 md:space-y-8">
+          
+          <div class="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-[#C5A059]/40 transition-all">
+            <span class="font-serif text-5xl italic text-[#C5A059] font-bold">01</span>
+            <div>
+              <h3 class="text-xl font-bold mb-2" data-i18n="step1Title">Araç Seçimi ve Rezervasyon</h3>
+              <p class="text-sm text-gray-400 font-light" data-i18n="step1Desc">Geniş ve bakımlı VIP araç koleksiyonumuzdan tarzınıza en uygun modeli seçin, tarihlerinizi belirleyin.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-[#C5A059]/40 transition-all">
+            <span class="font-serif text-5xl italic text-[#C5A059] font-bold">02</span>
+            <div>
+              <h3 class="text-xl font-bold mb-2" data-i18n="step2Title">Dijital Sürücü Doğrulaması</h3>
+              <p class="text-sm text-gray-400 font-light" data-i18n="step2Desc">Ehliyet ve kimlik bilgilerinizi güvenli altyapımıza yükleyin. Uzman ekibimiz saniyeler içinde onaylasın.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-[#C5A059]/40 transition-all">
+            <span class="font-serif text-5xl italic text-[#C5A059] font-bold">03</span>
+            <div>
+              <h3 class="text-xl font-bold mb-2" data-i18n="step3Title">3D Secure Güvenli Ödeme</h3>
+              <p class="text-sm text-gray-400 font-light" data-i18n="step3Desc">Sanal POS üzerinden kiralama bedeli veya kaporayı güvenle ödeyin. Sürpriz ek maliyet ve saklı ücret yoktur.</p>
+            </div>
+          </div>
+
+          <div class="flex gap-6 p-6 rounded-3xl bg-white/5 border border-white/10 hover:border-[#C5A059]/40 transition-all">
+            <span class="font-serif text-5xl italic text-[#C5A059] font-bold">04</span>
+            <div>
+              <h3 class="text-xl font-bold mb-2" data-i18n="step4Title">7/24 VIP Valet Teslimat</h3>
+              <p class="text-sm text-gray-400 font-light" data-i18n="step4Desc">Seçtiğiniz havalimanı terminalinde veya adresinizde aracınız tertemiz ve dolu depo ile kapınıza teslim edilir.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRUST & TESTIMONIALS SECTION -->
+  <section id="yorumlar" class="py-24 px-6 bg-[#FDFCF8]">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center mb-24">
+        <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm">
+          <span class="font-serif text-5xl font-bold text-[#121214] block mb-2">200+</span>
+          <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="statsFleet">LÜKS ARAÇ FİLOSU</span>
+        </div>
+        <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm">
+          <span class="font-serif text-5xl font-bold text-[#121214] block mb-2">15+</span>
+          <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="statsYears">YILLIK GÜVEN</span>
+        </div>
+        <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm">
+          <span class="font-serif text-5xl font-bold text-[#C5A059] block mb-2">%99.4</span>
+          <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="statsSatisfaction">MEMNUNİYET ORANI</span>
+        </div>
+        <div class="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm">
+          <span class="font-serif text-5xl font-bold text-[#121214] block mb-2">7/24</span>
+          <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="statsSupport">YOL YARDIM & DESTEK</span>
+        </div>
+      </div>
+
+      <!-- Testimonials Header -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+        <div>
+          <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-2" data-i18n="testimSubheading">MİSAFİR GÖRÜŞLERİ</span>
+          <h2 class="font-serif text-4xl md:text-5xl text-[#121214]" data-i18n="testimHeading">Asil Müşterilerimizin Deneyimleri</h2>
+        </div>
+
+        <!-- Write a Review Button -->
+        <button onclick="openReviewSubmissionModal()" class="btn-noble-gold" style="padding: 12px 24px;">
+          <i class="ri-edit-box-line"></i> Yorum Yap (E-Posta Doğrulamalı)
+        </button>
+      </div>
+
+      <!-- Dynamic Testimonials Grid -->
+      <div id="testimonials-container" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DYNAMIC FAQ ACCORDION SECTION -->
+  <section id="faq" class="py-24 px-6 bg-[#F5F4F0]/80">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-16">
+        <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-2" data-i18n="faqSubheading">SIKÇA SORULAN SORULAR</span>
+        <h2 class="font-serif text-4xl md:text-5xl text-[#121214]" data-i18n="faqHeading">Aklınıza Takılan Sorular</h2>
+      </div>
+
+      <div id="faq-accordion-container" class="space-y-4">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT & GOOGLE MAPS SECTION -->
+  <section id="iletisim" class="py-24 px-6 bg-[#FDFCF8]">
+    <div class="max-w-7xl mx-auto">
+      
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <span class="text-[10px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase block mb-2" data-i18n="contactSubheading">İLETİŞİM & LOKASYON</span>
+        <h2 class="font-serif text-4xl md:text-5xl text-[#121214]" data-i18n="contactHeading">Bizimle İletişime Geçin</h2>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
+        
+        <div class="lg:col-span-5 space-y-6">
+          <p class="text-gray-600 font-light leading-relaxed mb-6" data-i18n="contactDesc">
+            VIP araç kiralama rezervasyonu, özel şoförlü transfer veya filo kiralama teklifleri için 7/24 uzman ekibimiz hizmetinizdedir.
+          </p>
+
+          <div class="flex items-center gap-4 p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-[#121214] text-[#C5A059] flex items-center justify-center text-xl">
+              <i class="ri-phone-line"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="contactCallCenter">7/24 ÇAĞRI MERKEZİ</span>
+              <p class="font-bold text-base text-[#121214]">+90 (212) 555 0123</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-[#25D366] text-white flex items-center justify-center text-xl">
+              <i class="ri-whatsapp-line"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="contactWhatsapp">WHATSAPP HIZLI DESTEK</span>
+              <p class="font-bold text-base text-[#121214]">+90 (532) 555 0123</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <div class="w-12 h-12 rounded-xl bg-[#121214] text-[#C5A059] flex items-center justify-center text-xl">
+              <i class="ri-map-pin-line"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-extrabold tracking-widest text-gray-400 uppercase" data-i18n="contactHQ">GENEL MERKEZ & LOKASYON</span>
+              <p class="font-bold text-sm text-[#121214]">Çağrı RentaCar, Amasya Merkez / Türkiye</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="lg:col-span-7 bg-white p-8 md:p-10 rounded-3xl border border-gray-200 shadow-sm">
+          <h3 class="font-serif text-2xl font-bold mb-6" data-i18n="contactFormTitle">Hızlı Bilgi ve Teklif Formu</h3>
+          
+          <form id="contact-form" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="form-group">
+                <label class="form-label" data-i18n="formName">ADINIZ SOYADINIZ</label>
+                <input type="text" required class="form-input" placeholder="Ahmet Yılmaz">
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="formPhone">TELEFON NUMARANIZ</label>
+                <input type="tel" required class="form-input" placeholder="+90 5XX XXX XX XX">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" data-i18n="formEmail">E-POSTA ADRESİNİZ</label>
+              <input type="email" required class="form-input" placeholder="ahmet@example.com">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" data-i18n="formMessage">TALEP ETTİĞİNİZ ARAÇ VEYA MESAJINIZ</label>
+              <textarea rows="3" required class="form-textarea" placeholder="Kiralamak istediğiniz tarih aralığı ve araç tercihinizi belirtebilirsiniz..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-noble-gold" style="width: 100%; justify-content: center; padding: 16px;" data-i18n="btnSendMessage">
+              Mesajı Gönder <i class="ri-send-plane-fill"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+
+      <!-- GOOGLE MAPS EMBED SECTION -->
+      <div class="space-y-4">
+        <div class="bg-[#121214] text-white p-6 rounded-3xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#C5A059]/30">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-[#C5A059] text-black flex items-center justify-center font-bold text-2xl font-serif">Ç</div>
+            <div>
+              <span class="text-[9px] font-extrabold tracking-widest text-[#C5A059] uppercase block" data-i18n="mapBadge">GOOGLE HARİTALAR KONUMU</span>
+              <h4 class="font-serif text-xl font-bold">Çağrı RentaCar Genel Merkez</h4>
+              <p class="text-xs text-gray-400">Amasya Merkez / Türkiye</p>
+            </div>
+          </div>
+          <a href="https://www.google.com/maps/place//data=!4m2!3m1!1s0x40876f5042555f41:0x759b297d20dd0c1d?sa=X&ved=1t:8290&ictx=111" target="_blank" class="btn-noble-gold" style="padding: 10px 20px; font-size: 0.7rem;">
+            <i class="ri-navigation-line"></i> <span data-i18n="mapGetDirections">Google Haritalar'da Yol Tarifi Al</span>
+          </a>
+        </div>
+
+        <div class="map-embed-wrapper">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3002.321045!2d35.83!3d40.65!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40876f5042555f41%3A0x759b297d20dd0c1d!2zw4dhxJ9yxLEgUmVudGEgQ2Fy!5e0!3m2!1str!2str!4v1700000000000!5m2!1str!2str" 
+            width="100%" 
+            height="450" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#121214] text-white pt-20 pb-10 px-6 border-t border-white/10">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+      
+      <div>
+        <div class="flex items-center gap-3 mb-6">
+          <div class="brand-logo-badge" style="background: var(--noble-gold); color: var(--noble-charcoal);">Ç</div>
+          <div class="flex flex-col">
+            <span class="font-serif text-2xl font-bold tracking-tight uppercase">Çağrı</span>
+            <span class="text-[9px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase">Rent a Car</span>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 font-light leading-relaxed">
+          Seçkin sürüş deneyimi ve lüks araç kiralama konusunda Türkiye'nin lider VIP markası. Zarafet, emniyet ve şeffaf hizmetin adresi.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="text-[11px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase mb-6">HIZLI BAĞLANTILAR</h4>
+        <ul class="space-y-3 text-xs text-gray-300 font-semibold uppercase tracking-wider">
+          <li><a href="#hero" class="hover:text-[#C5A059] transition-colors" data-i18n="navHome">Anasayfa</a></li>
+          <li><a href="#filo" class="hover:text-[#C5A059] transition-colors" data-i18n="navFleet">Seçkin Araç Filomuz</a></li>
+          <li><a href="#nasil-calisir" class="hover:text-[#C5A059] transition-colors" data-i18n="navExperience">Kiralama Koşulları</a></li>
+          <li><a href="#iletisim" class="hover:text-[#C5A059] transition-colors" data-i18n="navContact">İletişim & Lokasyonlar</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-[11px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase mb-6">KOLEKSİYONLAR</h4>
+        <ul class="space-y-3 text-xs text-gray-300 font-semibold uppercase tracking-wider">
+          <li><a href="#filo" class="hover:text-[#C5A059] transition-colors" data-i18n="catSedan">Business Sedan Serisi</a></li>
+          <li><a href="#filo" class="hover:text-[#C5A059] transition-colors" data-i18n="catSUV">Luxury SUV Serisi</a></li>
+          <li><a href="#filo" class="hover:text-[#C5A059] transition-colors" data-i18n="catEV">Porsche & Taycan EV</a></li>
+          <li><a href="#filo" class="hover:text-[#C5A059] transition-colors">Mercedes-Maybach VIP</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="text-[11px] font-extrabold tracking-[0.25em] text-[#C5A059] uppercase mb-6">SOSYAL MEDYA</h4>
+        <div class="flex gap-4">
+          <a href="https://www.instagram.com/cagrirentcar05/" target="_blank" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-gray-300 hover:bg-[#C5A059] hover:text-[#121214] transition-all"><i class="ri-instagram-line"></i></a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-500 font-extrabold uppercase tracking-widest gap-4">
+      <p data-i18n="footerRights">&copy; 2026 ÇAĞRI NOBLE RENT A CAR. TÜM HAKLARI SAKLIDIR.</p>
+      <div class="flex gap-6">
+        <a href="aydinlatma.html" class="hover:text-white transition-colors" data-i18n="footerPrivacy">KVKK Aydınlatma Metni</a>
+        <a href="cerez.html" class="hover:text-white transition-colors" data-i18n="footerCookies">Çerez Politikası</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- REVIEW SUBMISSION & EMAIL VERIFICATION MODAL -->
+  <div id="review-modal" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 580px;">
+      <button onclick="closeModal('review-modal')" class="modal-close-btn">&times;</button>
+      
+      <div id="review-modal-content" class="p-8">
+        <!-- Rendered dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- CAR DETAIL MODAL -->
+  <div id="car-detail-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <button onclick="closeModal('car-detail-modal')" class="modal-close-btn">&times;</button>
+      <div id="car-detail-content">
+        <!-- Filled dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT & PAYMENT MODAL -->
+  <div id="checkout-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <button onclick="closeModal('checkout-modal')" class="modal-close-btn">&times;</button>
+      <div id="checkout-content">
+        <!-- Filled dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- App Main Logic Script -->
+  <script src="app.js"></script>
+
+</body>
+</html>

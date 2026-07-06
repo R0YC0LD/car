@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Araç Fotoğrafları Klasörü (vehicles/)
+    match /vehicles/{imageId} {
+      allow read, write: if true;
+    }
+    
+    // Müşteri / Yorum Yüklemeleri (user_uploads/)
+    match /user_uploads/{fileId} {
+      allow read, write: if true;
+    }
+
+    // Genel okuma/yazma izni
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
