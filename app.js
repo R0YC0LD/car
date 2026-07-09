@@ -1559,7 +1559,7 @@ function downloadReservationPDF(pnr) {
     return;
   }
 
-  const car = vehicles.find(c => `${c.brand} ${c.model}` === res.carName) || INITIAL_VEHICLES.find(c => `${c.brand} ${c.model}` === res.carName) || { price: res.totalPrice / 3 };
+  const car = vehicles.find(c => `${c.brand} ${c.model}` === res.carName) || { price: res.totalPrice / 3 };
   const dailyRate = car.price;
   const days = checkoutBookingData.days || 3;
   let discountPerc = 0;
